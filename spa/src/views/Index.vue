@@ -287,7 +287,6 @@ export default {
   methods: {
     //  加载选择项
     loadSelect() {
-
       let state = this.$store.state.user;
 
       this.action = state.selectedAction;
@@ -451,6 +450,13 @@ export default {
       if (this.money <= 0) {
         this.$toast({
           content: "🤔 似乎这笔帐算错了",
+          light: true,
+        });
+        return;
+      }
+      if (this.money < 0.01) {
+        this.$toast({
+          content: "😶 太小了",
           light: true,
         });
         return;

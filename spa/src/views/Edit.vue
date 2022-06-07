@@ -190,13 +190,23 @@ export default {
       item.time_text = time.toString(item.time);
     },
     done() {
-      if (
-        isNaN(new BigNumber(this.item.money).toNumber()) ||
-        this.item.money == 0
-      ) {
+      let money = new BigNumber(this.item.money).toNumber();
+      if (isNaN(money) || money == 0) {
         this.$toast({
           content: "😧 金额错误",
         });
+      } else if (money < 0.01) {
+        this.$toast({
+          content: "😶 太小了",
+          light: true,
+        });
+        return;
+      } else if (money >= 100000000) {
+        this.$toast({
+          content: "😨 暂时无法处理这笔巨款",
+          light: true,
+        });
+        return;
       } else if (this.item.remark.length > 10) {
         this.$toast({
           content: "🐻 备注只能在10个字内",
