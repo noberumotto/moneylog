@@ -1,0 +1,9 @@
+//  api请求域名
+let apiBaseUrl = 'http://url/api/';
+
+const icons = ['yen-banknote', 'baby-bottle', 'baby', 'candy', 'cloud', 'fuel-pump', 'house', 'label', 'man', 'package', 'pill', 'sparkles', 'woman', 'airplane', 'automobile', 'beach-with-umbrella', 'beer-mug', 'bread', 'briefcase', 'broccoli', 'bubble-tea', 'bus', 'cat', 'chart-increasing', 'clapper-board', 'cooked-rice', 'cut-of-meat', 'fishing-pole', 'hamburger', 'handbag', 'handshake', 'laptop', 'party-popper', 'ping-pong', 'pizza', 'service-dog', 'shopping-cart', 'sparkling-heart', 'syringe', 't-shirt', 'taxi', 'tropical-drink', 'video-game', 'watermelon', 'wrapped-gift'];
+
+export default {
+    apiBaseUrl,
+    icons
+}
