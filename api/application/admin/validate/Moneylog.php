@@ -8,10 +8,10 @@ class Moneylog extends Validate
 {
     protected $rule = [
         'user_id'  =>  'require|number',
-        'money'  =>  'require|number',
+        'money'  =>  'require|number|between:0.01,1000000',
         'account_id'  =>  'require|number',
         'tags_id'  =>  'require|number',
-        'time'  =>  'require|number',
+        'time'  =>  'require|number|date',
         'remark'  =>  'max:10',
     ];
 

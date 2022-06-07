@@ -112,23 +112,15 @@ class Moneylog extends Api
             }
         }
 
-        // $tagsArr =  array_unique($tagsArr);
-        // $accountArr = array_unique($accountArr);
-
-        // //  验证分类信息
-        // $check = model('app\admin\model\Tags')->where('user_id', $this->auth->id)->where('id', 'in', $tagsArr)->count();
-        // if ($check != count($tagsArr)) {
-        //     $this->error('存在异常分类');
-        // }
-        // //  验证账户信息
-        // $check = model('app\admin\model\Account')->where('user_id', $this->auth->id)->where('id', 'in', $accountArr)->count();
-        // if ($check != count($accountArr)) {
-        //     $this->error('存在异常账户');
-        // }
-
-
-        $res = $this->model->allowField(true)->saveAll($trueData);
-        $this->success('', $res);
+        $validate = new \app\admin\validate\Moneylog();
+        $vc = $validate->batch()->check($trueData);
+        if ($vc) {
+            $res = $this->model->allowField(true)->saveAll($trueData);
+            $this->success('', $res);
+        } else {
+            // var_dump($trueData);
+            $this->error($validate->getError());
+        }
     }
 
     public function del()
@@ -465,15 +457,6 @@ class Moneylog extends Api
 
     public function edit()
     {
-        // $id = $this->request->post('id');
-        // $tags_id = $this->request->post('tags_id');
-        // $account_id = $this->request->post('account_id');
-        // $time = $this->request->post('time');
-        // $money = $this->request->post('money');
-        // $remarks = $this->request->post('remarks');
-        // if (!$id || !$tags_id || !$account_id || !$time || !$money) {
-        //     $this->error('参数错误');
-        // }
         $data = $this->request->post();
         unset($data['tag']);
         unset($data['account']);
@@ -491,22 +474,24 @@ class Moneylog extends Api
             $this->error('参数错误' . $validate->getError());
         }
 
-        $ret = $this->model->isUpdate(true)->update($data);
-        if ($ret) {
-            $this->success('ok');
-        } else {
-            $this->error('失败' . $this->model->getError());
+        //  验证分类
+        $category = CacheDb::get('tags', $data['tags_id']);
+        if ($category && $category['user_id'] == $this->auth->id) {
+            //  验证通过
+
+            //  验证账户
+            $account = CacheDb::get('account', $data['account_id']);
+            if ($account && $account['user_id'] == $this->auth->id) {
+
+                //  验证通过
+                $ret = $this->model->isUpdate(true)->update($data);
+                if ($ret) {
+                    $this->success('ok');
+                } else {
+                    $this->error('失败' . $this->model->getError());
+                }
+            }
         }
-        // $data = $this->model->where('id', $id)->where('user_id', $this->auth->id)->find();
-        // if ($data) {
-        //     $res =  $data->delete();
-        //     if ($res) {
-        //         $this->success('ok');
-        //     } else {
-        //         $this->error('删除失败');
-        //     }
-        // } else {
-        //     $this->error('账户不存在');
-        // }
+        $this->error('参数错误');
     }
 }
