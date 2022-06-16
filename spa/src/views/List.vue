@@ -187,6 +187,9 @@
                 </div>
                 <div class="time">
                   {{ parseTime(item.time_text) }}
+                  <div class="remark" v-if="item.remark">
+                    <div class="text">{{ item.remark }}</div>
+                  </div>
                 </div>
               </div>
               <div
@@ -370,7 +373,7 @@ export default {
             }
           }
 
-          window.scrollTo(0,listPageData.scroll)
+          window.scrollTo(0, listPageData.scroll);
 
           return true;
         }
@@ -754,7 +757,7 @@ export default {
       }
     }
     .money {
-      width: 8rem;
+      width: 6rem;
       text-align: right;
       font-size: 1.1rem;
       font-weight: bold;
