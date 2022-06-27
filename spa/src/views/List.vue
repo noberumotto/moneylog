@@ -13,10 +13,21 @@
 
     <div class="head">
       <scope-buttons :data="['日', '月']" v-model="tabIndex" />
+
+      <div class="search">
+        <input
+          placeholder="搜索分类、账户、备注、金额"
+          class="inputbox"
+          type="text"
+          :value="keyword"
+          @change="search"
+        />
+        <div class="button yellow" @click="reload">🔍</div>
+      </div>
     </div>
 
     <!--日-->
-    <div class="total" v-if="tabIndex == 0">
+    <div class="total" v-if="tabIndex == 0 && !keyword">
       <div class="item">
         <div class="icon">👇</div>
         <div class="value" :class="{ small: isOut(dayTotalIn) }">
@@ -101,11 +112,15 @@
       class="empty-tip"
       v-if="dayData.length == 0 && tabIndex == 0"
     >
-      🐞 🐕 没有任何记录
+      {{
+        keyword
+          ? "🔍 在 " + day + " 没有找到 “" + keyword + "” 相关的记录"
+          : "🐞 🐕 没有任何记录"
+      }}
     </div>
 
     <!--月-->
-    <div class="total" v-if="tabIndex == 1">
+    <div class="total" v-if="tabIndex == 1 && !keyword">
       <div class="item">
         <div class="icon">👇</div>
         <div class="value" :class="{ small: isOut(monthTotalIn) }">
@@ -213,7 +228,11 @@
       class="empty-tip"
       v-if="monthDataList.length == 0 && tabIndex == 1"
     >
-      🐀 🐈 这个月什么都没有
+      {{
+        keyword
+          ? "🔍 在 " + month + " 没有找到 “" + keyword + "” 相关的记录"
+          : "🐀 🐈 这个月什么都没有"
+      }}
     </div>
   </div>
 </template>
@@ -256,6 +275,7 @@ export default {
       monthTotalOut: 0,
       monthDataList: [],
       todayDate: "",
+      keyword: "", //  搜索关键词
     };
   },
   computed: {
@@ -333,6 +353,18 @@ export default {
     window.removeEventListener("scroll", this.scroll);
   },
   methods: {
+    search(e) {
+      this.keyword = e.target.value;
+    },
+    reload() {
+      this.dayData = [];
+      this.dayTotalPage = 1;
+      this.dayPageIndex = 0;
+      this.monthDataList = [];
+      this.monthTotalPage = 1;
+      this.monthPageIndex = 0;
+      this.getData();
+    },
     clearState() {
       this.$store.commit("user/update", {
         pageData: [],
@@ -428,11 +460,30 @@ export default {
       return (val + "").length >= 9;
     },
     longTap(index, monthIndex = 0) {
-      this.$modal({
-        title: "🚨 提示",
-        content: "即将删除这条记录，是否确定？",
-        confirm: () => {
-          this.del(index, monthIndex);
+      this.$wselect({
+        title: "操作",
+        data: [
+          {
+            id: 1,
+            name: "编辑",
+          },
+          {
+            id: 2,
+            name: "❗ 删除",
+          },
+        ],
+        res: (res) => {
+          if (res.id == 1) {
+            this.edit(index, monthIndex);
+          } else if (res.id == 2) {
+            this.$modal({
+              title: "🚨 提示",
+              content: "即将删除这条记录，是否确定？",
+              confirm: () => {
+                this.del(index, monthIndex);
+              },
+            });
+          }
         },
       });
     },
@@ -573,6 +624,7 @@ export default {
       this.$request.post({
         url: "moneylog/list",
         data: {
+          keyword: this.keyword,
           page: this.tabIndex == 0 ? this.dayPageIndex : this.monthPageIndex,
           type: this.tabIndex == 0 ? "day" : "month",
           date: this.tabIndex == 0 ? this.day : this.month,
@@ -641,6 +693,22 @@ export default {
 }
 .head {
   margin: 0 2rem;
+  .search {
+    background: #fff;
+    padding: 0.5rem;
+    display: flex;
+    margin-top: 1rem;
+    border-radius: 1rem;
+    justify-content: space-between;
+    input {
+      height: 3rem;
+      flex: 1;
+      font-size: 1rem;
+    }
+    .button {
+      margin-left: 1rem;
+    }
+  }
 }
 .month-data {
   .month-date {

@@ -37,11 +37,19 @@ class Moneylog extends Api
 
         $date = $this->request->post('date'); // type=day:y-m-d;type=month:y-m
 
+        //  搜索关键词
+        $keyword = $this->request->post('keyword');
+
         $where = [];
 
-        $where['user_id'] = $this->auth->id;
+        $where['money_log.user_id'] = $this->auth->id;
 
-        $field = 'id,money,status,time,tags_id,account_id,remark';
+        $field = 'money_log.id,money,money_log.status,time,tags_id,account_id,remark';
+
+        $list = $this->model->with('tag,account');
+
+
+
 
         if ($type == 'day') {
             //  按天查询，列出当天所有记录
@@ -51,21 +59,95 @@ class Moneylog extends Api
                 $date . ' 23:59:59',
             ];
 
-            $list = $this->model->with('tag,account')->whereTime('time', 'between', $dateArr)->where($where)->field($field)->order('time desc')->paginate();
+            if ($keyword) {
+                $select = $this
+                    ->model
+                    ->alias('m')
+                    ->join('tags tag', 'tag.id=m.tags_id')
+                    ->join('account account', 'account.id=m.account_id');
 
-            $totalIn = $this->model->whereTime('time', 'between', $dateArr)->where($where)->where('status', 1)->sum('money');
-            $totalOut = $this->model->whereTime('time', 'between', $dateArr)->where($where)->where('status', 0)->sum('money');
+                $select = $select->where(function ($query) use ($dateArr, $where, $keyword) {
+                    $query
+                        ->whereTime('time', 'between', $dateArr)
+                        ->where($where)
+                        ->where('tag.name', 'like', '%' . $keyword . '%');
+                })->whereOr(function ($query) use ($dateArr, $where, $keyword) {
+                    $query
+                        ->whereTime('time', 'between', $dateArr)
+                        ->where($where)
+                        ->where('account.name', 'like', '%' . $keyword . '%');
+                })->whereOr(function ($query) use ($dateArr, $where, $keyword) {
+                    $query
+                        ->whereTime('time', 'between', $dateArr)
+                        ->where($where)
+                        ->where('money', $keyword);
+                })->whereOr(function ($query) use ($dateArr, $where, $keyword) {
+                    $query
+                        ->whereTime('time', 'between', $dateArr)
+                        ->where($where)
+                        ->where('remark', 'like', '%' . $keyword . '%');
+                });
+
+
+
+                $list = $select->field($field)->order('time desc')->paginate();
+
+                $totalIn = 0;
+                $totalOut = 0;
+            } else {
+                $list = $list->whereTime('time', 'between', $dateArr)->where($where)->field($field)->order('time desc')->paginate();
+                $totalIn = $this->model->whereTime('time', 'between', $dateArr)->where($where)->where('status', 1)->sum('money');
+                $totalOut = $this->model->whereTime('time', 'between', $dateArr)->where($where)->where('status', 0)->sum('money');
+            }
         } else if ($type == "month") {
             //  按月查询，汇总当月的每日记录
             $days = date("t", strtotime($date . '-01'));
             $dateArr = [$date . '-01 00:00:00', $date . '-' . $days . ' 23:59:59'];
 
-            $list = $this->model->with('tag,account')->field("FROM_UNIXTIME(time,'%Y-%m-%d') as day")->whereTime('time', 'between', $dateArr)->where($where)->field($field)->order('time desc')->paginate();
 
-            // $list = $this->model->with('tag,account')->whereTime('time', 'between', $dateArr)->where($where)->field("sum(money) as sum,FROM_UNIXTIME(time,'%Y-%m-%d') as day")->group("tags_id,FROM_UNIXTIME(time,'%Y-%m-%d')")->field($field)->order('day desc,id desc')->paginate();
+            if ($keyword) {
+                $select = $this
+                    ->model
+                    ->alias('m')
+                    ->join('tags tag', 'tag.id=m.tags_id')
+                    ->join('account account', 'account.id=m.account_id');
 
-            $totalIn = $this->model->whereTime('time', 'between', $dateArr)->where($where)->where('status', 1)->sum('money');
-            $totalOut = $this->model->whereTime('time', 'between', $dateArr)->where($where)->where('status', 0)->sum('money');
+                $select = $select->where(function ($query) use ($dateArr, $where, $keyword) {
+                    $query
+                        ->whereTime('time', 'between', $dateArr)
+                        ->where($where)
+                        ->where('tag.name', 'like', '%' . $keyword . '%');
+                })->whereOr(function ($query) use ($dateArr, $where, $keyword) {
+                    $query
+                        ->whereTime('time', 'between', $dateArr)
+                        ->where($where)
+                        ->where('account.name', 'like', '%' . $keyword . '%');
+                })->whereOr(function ($query) use ($dateArr, $where, $keyword) {
+                    $query
+                        ->whereTime('time', 'between', $dateArr)
+                        ->where($where)
+                        ->where('money', $keyword);
+                })->whereOr(function ($query) use ($dateArr, $where, $keyword) {
+                    $query
+                        ->whereTime('time', 'between', $dateArr)
+                        ->where($where)
+                        ->where('remark', 'like', '%' . $keyword . '%');
+                });
+
+
+
+                $list = $select->field("FROM_UNIXTIME(time,'%Y-%m-%d') as day")->field($field)->order('time desc')->paginate();
+
+                $totalIn = 0;
+                $totalOut = 0;
+            } else {
+                $list = $list->field("FROM_UNIXTIME(time,'%Y-%m-%d') as day")->whereTime('time', 'between', $dateArr)->where($where)->field($field)->order('time desc')->paginate();
+
+                // $list = $this->model->with('tag,account')->whereTime('time', 'between', $dateArr)->where($where)->field("sum(money) as sum,FROM_UNIXTIME(time,'%Y-%m-%d') as day")->group("tags_id,FROM_UNIXTIME(time,'%Y-%m-%d')")->field($field)->order('day desc,id desc')->paginate();
+
+                $totalIn = $this->model->whereTime('time', 'between', $dateArr)->where($where)->where('status', 1)->sum('money');
+                $totalOut = $this->model->whereTime('time', 'between', $dateArr)->where($where)->where('status', 0)->sum('money');
+            }
         }
 
         $result = [
