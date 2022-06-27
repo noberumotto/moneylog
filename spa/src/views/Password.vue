@@ -25,7 +25,7 @@
         </div>
 
         <div class="action">
-          <div class="button max yellow" @click="go()">🗝 🔨</div>
+          <div class="button max yellow" @click="go()">更新</div>
         </div>
       </div>
     </div>
@@ -52,19 +52,19 @@ export default {
     go() {
       if (!this.newPassword || !this.oldPassword) {
         this.$toast({
-          content: "🔧 好像缺少了点什么",
+          content: "请输入正确的信息",
         });
         return;
       }
       if (this.newPassword == this.oldPassword) {
         this.$toast({
-          content: "🐳 什么都没发生",
+          content: "新密码与旧密码重复",
         });
         return;
       }
       if (this.newPassword.length < 6 || this.newPassword.length > 30) {
         this.$toast({
-          content: "🦁 密码应该在6~30位之间哦",
+          content: "密码应该在6~30位之间哦",
         });
         return;
       }
@@ -79,14 +79,14 @@ export default {
           localStorage.setItem("Token", res.data);
 
           this.$toast({
-            content: "🔐✨ 新的钥匙已经打造完成",
+            content: "🔐✨ 密码已更新",
           });
           this.newPassword = "";
           this.oldPassword = "";
         },
         fail: () => {
           this.$toast({
-            content: "🐌 材料似乎出了问题",
+            content: "操作失败",
           });
         },
       });
