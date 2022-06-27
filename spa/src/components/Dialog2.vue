@@ -7,9 +7,9 @@
         <div class="slot"><slot></slot></div>
       </div>
       <div class="action">
-        <div class="btn" @click="$emit('no')">🙅‍</div>
+        <div class="btn" @click="$emit('no')">取消‍</div>
 
-        <div class="btn button" @click="$emit('yes')">👌</div>
+        <div class="btn button" @click="$emit('yes')">确认</div>
       </div>
     </div>
   </div>

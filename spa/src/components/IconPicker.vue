@@ -21,7 +21,7 @@
 
       <div class="action">
         <!-- <div class="btn" @click="today">现在</div> -->
-        <div class="btn done" @click="onDone">👌</div>
+        <div class="btn done" @click="onDone">确认</div>
       </div>
     </div>
   </div>

@@ -11,17 +11,17 @@
       </div>
 
       <div class="action">
-        <div class="btn" @click="login()"><!-- Go<span>→</span> -->👌</div>
+        <div class="btn" @click="login()"><!-- Go<span>→</span> -->确定</div>
       </div>
     </div>
 
     <div class="menu">
-      <div class="text">纯粹记账体验</div>
+      <div class="text">还没有账号？</div>
 
       <div class="text">👇</div>
       <!-- <div class="line"></div> -->
 
-      <div class="btn" @click="$router.push('/register')">🦒 注册账号</div>
+      <div class="btn" @click="$router.push('/register')">注册</div>
     </div>
   </div>
 </template>
@@ -50,12 +50,12 @@ export default {
         )
       ) {
         this.$toast({
-          content: "😉 请输入正确的邮箱",
+          content: "请输入正确的邮箱",
         });
         return;
       } else if (!this.password) {
         this.$toast({
-          content: "🤔 暗号是什么呢",
+          content: "请输入密码",
         });
         return;
       }
@@ -80,7 +80,7 @@ export default {
         },
         fail: () => {
           this.$toast({
-            content: "🦀 噢欧，远方似乎没有传来回应。检查一下暗号是否正确",
+            content: "验证失败",
           });
         },
         complete: () => {
@@ -137,6 +137,9 @@ export default {
         margin-left: 1rem;
       }
     }
+    .btn:active{
+      background: #355ece;
+    }
   }
 }
 .menu {
@@ -159,5 +162,8 @@ export default {
     text-align: center;
     box-shadow: 0 2px 0px 2px rgba(255, 232, 27, 0.2);
   }
+  .btn:active{
+      background: #ddc917;
+    }
 }
 </style>

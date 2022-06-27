@@ -59,9 +59,9 @@
             >
               {{ income > 0 ? "+" : "" }}<money-value :money="income" />
             </div>
-            <div class="unit" v-if="income >= 1000 || income <= -1000">
+            <!-- <div class="unit" v-if="income >= 1000 || income <= -1000">
               <span> {{ unit(income) }}</span>
-            </div>
+            </div> -->
           </div>
           <div class="item">
             <div class="icon">{{ getProfitsIcon(profits) }}</div>
@@ -73,9 +73,9 @@
             >
               <money-value :money="profits" />
             </div>
-            <div class="unit" v-if="profits >= 1000 || profits <= -1000">
+            <!-- <div class="unit" v-if="profits >= 1000 || profits <= -1000">
               <span>{{ unit(profits) }}</span>
-            </div>
+            </div> -->
           </div>
           <div class="item">
             <div class="icon">👆</div>
@@ -86,9 +86,9 @@
             >
               {{ outcome > 0 ? "-" : "" }}<money-value :money="outcome" />
             </div>
-            <div class="unit" v-if="outcome >= 1000 || outcome <= -1000">
+            <!-- <div class="unit" v-if="outcome >= 1000 || outcome <= -1000">
               <span> {{ unit(outcome) }}</span>
-            </div>
+            </div> -->
           </div>
         </div>
       </div>

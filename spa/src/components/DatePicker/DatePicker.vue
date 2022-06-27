@@ -59,7 +59,7 @@
         <div class="btn" @click="today">
           {{ isShowDays ? "今天" : !isShowMonth ? "今年" : "本月" }}
         </div>
-        <div class="btn done" @click="onDone">👌</div>
+        <div class="btn done" @click="onDone">确认</div>
       </div>
     </div>
   </div>

@@ -30,7 +30,7 @@
       </div>
       <div class="card">
         <div class="action">
-          <div class="button" @click="isShowAddDialog = true">✨ 添加</div>
+          <div class="button" @click="isShowAddDialog = true">添加</div>
         </div>
         <div class="empty-tip mt" v-if="count == 0">
           🐾 还没有与此相关的账户

@@ -37,7 +37,7 @@
       </div>
       <div class="card">
         <div class="action">
-          <div class="button" @click="add()">✨ 添加</div>
+          <div class="button" @click="add()">添加</div>
         </div>
         <div class="empty-tip mt" v-if="count == 0">🌳🦒 还没有任何分类</div>
 

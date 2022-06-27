@@ -12,9 +12,9 @@
         <div class="slot"><slot></slot></div>
       </div>
       <div class="action">
-        <div class="btn" @click="action(1)">🙅‍</div>
+        <div class="btn" @click="action(1)">取消‍</div>
 
-        <div class="btn done" @click="action(0)">👌</div>
+        <div class="btn done" @click="action(0)">确认</div>
       </div>
     </div>
   </div>

@@ -36,12 +36,12 @@
         />
       </div>
       <div class="action">
-        <div class="btn" @click="reg()">🔨 创建账号</div>
+        <div class="btn" @click="reg()">创建账号</div>
       </div>
     </div>
 
     <div class="menu">
-      <div class="text">是时候了吗？</div>
+      <div class="text">已有账号</div>
 
       <div class="text">👇</div>
       <!-- <div class="line"></div> -->
@@ -87,6 +87,10 @@ export default {
             this.sendEmail();
           },
         });
+      } else {
+        this.$toast({
+          content: "邮箱格式不被支持",
+        });
       }
     },
     sendEmail() {
@@ -110,9 +114,15 @@ export default {
       });
     },
     reg() {
-      if (!this.email || !this.password || !this.repassword || !this.code) {
+      if (!this.email || !this.password || !this.repassword) {
         this.$toast({
-          content: "☕ 似乎什么都还没有开始",
+          content: "请输入正确的信息",
+        });
+        return;
+      }
+      if (!this.code) {
+        this.$toast({
+          content: "请输入验证码",
         });
         return;
       }
@@ -122,14 +132,14 @@ export default {
         )
       ) {
         this.$toast({
-          content: "🐢 这个邮箱，可能是我永远无法到达的远方",
+          content: "邮箱格式不正确",
         });
         return;
       }
 
       if (this.password != this.repassword) {
         this.$toast({
-          content: "😭 两次密码不一致",
+          content: "两次密码输入不一致",
         });
         return;
       }
@@ -145,7 +155,7 @@ export default {
         },
         success: (res) => {
           this.$toast({
-            content: "👋 Hi，欢迎使用 Water 记账",
+            content: "👋 欢迎使用 Moneylog.cloud",
           });
           this.$store.commit("user/setLogin", {
             token: res.data.userinfo.token,
